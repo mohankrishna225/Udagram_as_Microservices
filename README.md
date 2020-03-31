@@ -3,6 +3,8 @@
 
 Project Link: https://github.com/mohankrishna225/Udagram_as_Microservices
 
+For deployment Version check git to version-2 and check the deployment files
+
 # Udagram
 
 Udagram is a simple cloud application developed alongside the Udacity Cloud Engineering Nanodegree. It allows users to register and log into a web client, post photos to the feed, and process photos using an image filtering microservice.
