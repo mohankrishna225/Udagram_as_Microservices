@@ -3,6 +3,8 @@
 
 Project Link: https://github.com/mohankrishna225/Udagram_as_Microservices
 
+<img src ="Screenshots/Docker version2.png">
+
 For deployment Version check git to version-2 and check the deployment files
 
 # Udagram
