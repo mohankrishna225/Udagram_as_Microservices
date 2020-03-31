@@ -278,58 +278,42 @@ Push your images to your Docker Hub
 docker-compose -f __YOUR_DOCKER_BUILD_FILE__ push
 ```
 
-### Deploy the Kubernetes pods
 
-For each deployment.yaml in `deployment/k8s` replace the image name by your own Docker Hub name. Example:
+etup Kubernetes environment
+You will need to install the kubectl command. Open a new terminal within the project directory and run:
 
-```YAML
-containers:
- - image: __YOUR_DOCKERHUB_NAME__/udagram-api-feed
+Generate encrypted values for aws credentials, Database User Name, and Database Password using bcrypt and put the values into aws-secret.yaml and env-secret.yaml files
+Load secret files:
 ```
-
-Deploy the Kubernetes pods by running
-
+kubectl apply -f aws-secret.yaml
+kubectl apply -f env-secret.yaml
 ```
-./deployment/k8s/deploy.sh
+Load config map: kubectl apply -f env-configmap.yaml
+Apply Deployments:
 ```
-
-### Deploy the AWS CloudWatch Agent
-
-Attach the `CloudWatchAgentServerPolicy` policy to the `udagram-host` IAM role
-
-Run the script:
+kubectl apply -f backend-feed-deployment.yaml
+kubectl apply -f frontend-deployment.yaml
+kubectl apply -f backend-user-deployment.yaml
 ```
-./deployment/k8s/deploy_fluentd.sh
+Apply Services:
 ```
-
-Application, services, and container logs are now sent to CloudWatch.
-
-### Deploy a canary version of your application
-
-2 versions of the application can be run on parallel for A/B Testing.
-
-Checkout the V2 branch by:
-
 ```
-git checkout -b V2
+kubectl apply -f backend-feed-service.yaml
+kubectl apply -f backend-user-service.yaml
+kubectl apply -f frontend-service.yaml
+Deploy reverse proxy, has to be done after the services are running:
+kubectl apply -f reverseproxy-deployment.yaml
+kubectl apply -f reverseproxy-service.yaml
+Perform port forwarding (each needs to be run in a separate terminal window and left running)
+kubectl port-forward service/frontend 8100:8100
+kubectl port-forward service/reverseproxy 8080:8080
 ```
-
-Add the tag V2 on the frontend image in your Docker production build file and build it:
-
+Check Status:
 ```
-docker-compose -f __YOUR_DOCKER_BUILD_FILE__ build --parallel
+kubectl get nodes
+kubectl get pod --all-namespaces
+kubectl get svc
+kubectl get configmaps
+kubectl get secrets
+kubectl describe secret/env-secret
 ```
-
-Push the V2 frontend image to your Docker Hub
-
-```
-docker-compose -f __YOUR_DOCKER_BUILD_FILE__ push
-```
-
-Deploy the V2 frontend in Kubernetes
-
-```
-kubectl -f deployment/k8s/frontend-canary-deployment.yaml
-```
-
-Voilà. The load balancer will route some traffic to the version 2
