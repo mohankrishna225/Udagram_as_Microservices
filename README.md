@@ -24,7 +24,7 @@ Furthermore, you need to have:
 Clone the repository on your local machine:
 
 ```
-git clone git@github.com:scarrupt/udagram.git
+git clone https://github.com/mohankrishna225/Udagram_as_Microservices.git
 ```
 
 ### Create an S3 bucket
@@ -114,99 +114,7 @@ The application is now running at http://localhost:8100
 
 The application is running in a Kubernetes Cluster on AWS.
 
-### Create a Kubernetes cluster
 
-#### Provision the infrastructure
-
-At first, add the following variables to your environment
-
-```
-AWS_ACCESS_KEY_ID=__YOUR_AWS_ACCES_KEY_ID__
-AWS_SECRET_ACCESS_KEY=__YOUR_AWS_SECRET_ACCESS_KEY__
-```
-
-Move to the directory `deployment/k8s/infrastructure` and run the following command:
-
-```
-terraform init
-```
-
-Edit the values `aws_region` and `ssh_public_key_file` in the file `terraform.tfvars` by your own data.
-
-Store the terraform variables below in a file named `terraform.tfvars`:
-
-```
-cluster_name = "udagram"
-aws_region = "__YOUR_AWS_REGION__"
-worker_os = "ubuntu"
-ssh_public_key_file = "~/.ssh/id_rsa.pub"
-```
-
-Modify `__YOUR_AWS_REGION__` by your AWS region.
-
-Confirm the changes by running
-
-```
-terraform plan
-```
-
-Provision the infrastructure on AWS by executing:
-
-```
-terraform apply
-```
-
-Don't forget to enter yes shortly after running the command.
-
-Once it's created, create the Terraform state that will be used by `KubeOne`:
-
-```
-terraform output -json > tf.json
-```
-
-#### Install Kubernetes
-
-Execute the following command
-
-```
-kubeone install config.yaml --tfjson tf.json
-```
-
-After Kubernetes was installed, export the following variable to your environment:
-
-```
-KUBECONFIG=$PWD/udagram-kubeconfig
-```
-
-More information can be found [here](https://github.com/kubermatic/kubeone/blob/master/docs/quickstart-aws.md).
-
-#### Delete the cluster
-
-If you need to delete the cluster you can run these commands:
-
-```
-kubeone reset config.yaml --tfjson tf.json
-```
-
-```
-terraform destroy
-```
-
-### Create a PostgreSQL Instance
-
-The application is using `PostgreSQL` database to store the feed data.
-
-Create a PostgresSQL instance via Amazon RDS.
-
-Add the ```udagram_common``` VPC security group to your Database instance so the services can access it.
-
-### Deploy the application services
-
-Deploy and start the application and services on Kubernetes by executing:
-
-```
-./deployment/k8s/deploy_services.sh
-```
 
 ### Build the production images
 
@@ -296,7 +204,6 @@ kubectl apply -f frontend-deployment.yaml
 kubectl apply -f backend-user-deployment.yaml
 ```
 Apply Services:
-```
 ```
 kubectl apply -f backend-feed-service.yaml
 kubectl apply -f backend-user-service.yaml
