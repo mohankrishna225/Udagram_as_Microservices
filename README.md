@@ -226,3 +226,26 @@ kubectl get configmaps
 kubectl get secrets
 kubectl describe secret/env-secret
 ```
+
+
+
+
+##Building a second version for deployment
+
+Change to version: 2 in deployment configurations and apply them.
+```
+kubectl apply -f backend-feed-deployment.yaml
+kubectl apply -f frontend-deployment.yaml
+kubectl apply -f backend-user-deployment.yaml
+kubectl apply -f reverseproxy-deployment.yaml
+```
+
+Now observe the changes in pods.
+```
+kubectl get pods
+kubectl get rs
+kubectl get deployments
+```
+
+
+
